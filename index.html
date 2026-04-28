@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cybersecurity · Stefania Silva Guedes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --bg:        #080c10;
+      --bg2:       #0d1117;
+      --bg3:       #121820;
+      --border:    #1e2d3d;
+      --accent:    #00e5ff;
+      --accent2:   #00ff9d;
+      --muted:     #4a6478;
+      --text:      #c8d8e4;
+      --heading:   #e8f4fd;
+      --card-bg:   rgba(13,17,23,0.85);
+      --glow:      0 0 20px rgba(0,229,255,0.15);
+      --glow-s:    0 0 8px rgba(0,229,255,0.35);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { color: var(--accent); text-decoration: none; transition: color .2s; }
+    a:hover { color: var(--accent2); }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+      pointer-events: none; z-index: 1000;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: -200%; width: 400%; height: 400%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025; pointer-events: none; z-index: 999;
+      animation: grain 0.8s steps(2) infinite;
+    }
+    @keyframes grain {
+      0%  { transform: translate(0,0); }
+      25% { transform: translate(-1%,-1%); }
+      50% { transform: translate(1%,1%); }
+      75% { transform: translate(-1%,1%); }
+    }
+
+    .grid-bg {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none; z-index: 0;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+    section { padding: 6rem 0; }
+    .section-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem; color: var(--accent);
+      letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.5rem;
+    }
+    .section-label::before { content: '// '; opacity: 0.5; }
+    h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--heading); margin-bottom: 3rem; line-height: 1.15; }
+    h2 span { color: var(--accent); }
+
+    /* LANG TOGGLE */
+    #lang-toggle {
+      position: fixed; top: 1rem; right: 8rem;
+      z-index: 1100;
+      display: flex; gap: 0.3rem;
+    }
+    .lang-btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem; letter-spacing: 0.1em;
+      padding: 0.28rem 0.7rem; border-radius: 2px; cursor: pointer;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); transition: all .2s;
+    }
+    .lang-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+    .lang-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      background: rgba(8,12,16,0.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border); padding: 1rem 0;
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: 'Share Tech Mono', monospace; font-size: 1rem; color: var(--accent); letter-spacing: 0.08em; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; color: var(--muted); letter-spacing: 0.1em; transition: color .2s; }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* HERO */
+    #hero { min-height: 100vh; display: flex; align-items: center; padding-top: 80px; position: relative; overflow: hidden; }
+    .hero-glow { position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+    .hero-tag { display: inline-block; font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--accent2); background: rgba(0,255,157,0.08); border: 1px solid rgba(0,255,157,0.2); padding: 0.35rem 0.85rem; border-radius: 2px; letter-spacing: 0.15em; margin-bottom: 1.5rem; animation: fadeUp 0.8s ease both; }
+    .hero-title { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; color: var(--heading); line-height: 1.1; margin-bottom: 1.5rem; animation: fadeUp 0.8s ease 0.1s both; letter-spacing: -0.02em; }
+    .hero-title .accent { color: var(--accent); }
+    .hero-title .dim { color: var(--muted); }
+    .hero-sub { max-width: 580px; color: var(--muted); font-size: 1.05rem; margin-bottom: 2.5rem; animation: fadeUp 0.8s ease 0.2s both; }
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeUp 0.8s ease 0.3s both; }
+    .btn { font-family: 'Share Tech Mono', monospace; font-size: 0.82rem; letter-spacing: 0.12em; padding: 0.75rem 1.8rem; border-radius: 2px; cursor: pointer; transition: all .2s; text-transform: uppercase; }
+    .btn-primary { background: var(--accent); color: #000; border: 1px solid var(--accent); box-shadow: var(--glow-s); }
+    .btn-primary:hover { background: transparent; color: var(--accent); box-shadow: var(--glow); }
+    .btn-ghost { background: transparent; color: var(--accent); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); box-shadow: var(--glow); }
+    .hero-stats { display: flex; gap: 3rem; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); animation: fadeUp 0.8s ease 0.4s both; flex-wrap: wrap; }
+    .stat-num { font-size: 2rem; font-weight: 800; color: var(--heading); }
+    .stat-num span { color: var(--accent); }
+    .stat-label { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* SOBRE */
+    #sobre { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .sobre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .sobre-text p { color: var(--text); margin-bottom: 1.2rem; font-size: 1rem; }
+    .sobre-text p strong { color: var(--accent); }
+    .sobre-skills { display: flex; flex-direction: column; gap: 1rem; }
+    .skill-bar-label { display: flex; justify-content: space-between; font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--text); margin-bottom: 0.4rem; }
+    .skill-bar-label span { color: var(--accent); }
+    .skill-bar-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .skill-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transform-origin: left; animation: barGrow 1.2s ease both; }
+    @keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+    /* CERTS */
+    #certs { background: var(--bg); }
+    .certs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    .cert-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1.8rem; position: relative; overflow: hidden; transition: border-color .2s, box-shadow .2s, transform .2s; }
+    .cert-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: linear-gradient(180deg, var(--accent), var(--accent2)); }
+    .cert-card:hover { border-color: var(--accent); box-shadow: var(--glow); transform: translateY(-3px); }
+    .cert-issuer { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.6rem; }
+    .cert-name { font-size: 1.05rem; font-weight: 700; color: var(--heading); margin-bottom: 0.4rem; }
+    .cert-hours { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--muted); margin-bottom: 0.6rem; }
+    .cert-desc { font-size: 0.88rem; color: var(--muted); margin-bottom: 1.2rem; }
+    .cert-badge { display: inline-flex; align-items: center; gap: 0.4rem; font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--accent2); background: rgba(0,255,157,0.07); border: 1px solid rgba(0,255,157,0.15); padding: 0.3rem 0.7rem; border-radius: 2px; }
+    .cert-badge::before { content: '✓ '; }
+
+    /* PROJETOS */
+    #projetos { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1.5rem; }
+    .project-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 4px; padding: 2rem; display: flex; flex-direction: column; gap: 1rem; transition: border-color .2s, box-shadow .2s, transform .2s; }
+    .project-card:hover { border-color: var(--accent); box-shadow: var(--glow); transform: translateY(-3px); }
+    .project-header { display: flex; align-items: flex-start; justify-content: space-between; }
+    .project-icon { width: 40px; height: 40px; background: rgba(0,229,255,0.08); border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .project-links { display: flex; gap: 0.6rem; }
+    .project-links a { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--muted); border: 1px solid var(--border); padding: 0.3rem 0.6rem; border-radius: 2px; transition: all .2s; }
+    .project-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .project-title { font-size: 1.1rem; font-weight: 700; color: var(--heading); }
+    .project-desc { font-size: 0.9rem; color: var(--muted); flex: 1; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag { font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; color: var(--accent); background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.15); padding: 0.2rem 0.6rem; border-radius: 2px; letter-spacing: 0.05em; }
+
+    /* CONTATO */
+    #contato { background: var(--bg); }
+    .contato-inner { max-width: 700px; margin: 0 auto; text-align: center; }
+    .contato-inner h2 { margin-bottom: 1rem; }
+    .contato-sub { color: var(--muted); margin-bottom: 3rem; font-size: 1rem; }
+    .social-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
+    .social-btn { display: inline-flex; align-items: center; gap: 0.5rem; font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; letter-spacing: 0.1em; color: var(--text); background: var(--bg3); border: 1px solid var(--border); padding: 0.75rem 1.5rem; border-radius: 2px; transition: all .2s; }
+    .social-btn:hover { color: var(--accent); border-color: var(--accent); box-shadow: var(--glow); }
+    .social-btn svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+    .email-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .email-label { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.3rem; }
+    .email-addr { font-size: 1.1rem; font-weight: 700; color: var(--heading); }
+
+    /* FOOTER */
+    footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 2rem 0; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .footer-copy { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+    .footer-name { color: var(--accent); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    @media (max-width: 768px) {
+      .sobre-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-stats { gap: 2rem; }
+      .nav-links { display: none; }
+      .footer-inner { justify-content: center; text-align: center; }
+      .email-box { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- LANG TOGGLE -->
+<div id="lang-toggle">
+  <button class="lang-btn active" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" onclick="setLang('pt')">PT</button>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="container nav-inner">
+    <span class="nav-logo">&gt; stefania.sec</span>
+    <ul class="nav-links">
+      <li><a href="#sobre" data-en="about" data-pt="sobre">about</a></li>
+      <li><a href="#certs" data-en="certs" data-pt="certs">certs</a></li>
+      <li><a href="#projetos" data-en="projects" data-pt="projetos">projects</a></li>
+      <li><a href="#contato" data-en="contact" data-pt="contato">contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-tag" data-en="Cybersecurity · SOC Analyst" data-pt="Cibersegurança · Analista SOC">Cybersecurity · SOC Analyst</div>
+    <p class="hero-pretitle" style="font-size: 1.1rem; letter-spacing: 4px; color: var(--accent); font-family: 'Share Tech Mono', monospace; margin-bottom: 0.5rem;" data-en="&gt; CYBERSECURITY PORTFOLIO" data-pt="&gt; PORTFÓLIO DE CIBERSEGURANÇA">&gt; CYBERSECURITY PORTFOLIO</p>
+    <h1 class="hero-title" style="font-size: clamp(1.8rem, 4vw, 2.8rem); margin-bottom: 1rem;">
+      Stefania <span class="accent">Guedes</span><span class="dim">.</span>
+    </h1>
+    <p class="hero-sub" data-en="Computer Science student focused on Cybersecurity and Infrastructure." data-pt="Estudante de Ciência da Computação com foco em Cibersegurança e Infraestrutura.">
+      Computer Science student focused on Cybersecurity and Infrastructure.
+    </p>
+    <div class="hero-cta">
+      <a href="#projetos" class="btn btn-primary" data-en="View Projects" data-pt="Ver Projetos">View Projects</a>
+      <a href="#contato" class="btn btn-ghost" data-en="Get in Touch" data-pt="Entrar em Contato">Get in Touch</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">4<span>+</span></div>
+        <div class="stat-label" data-en="Certifications" data-pt="Certificações">Certifications</div>
+      </div>
+      <div>
+        <div class="stat-num">2<span>+</span></div>
+        <div class="stat-label" data-en="Practical Projects" data-pt="Projetos Práticos">Practical Projects</div>
+      </div>
+      <div>
+        <div class="stat-num">400<span>h+</span></div>
+        <div class="stat-label" data-en="Study Hours" data-pt="Horas de Estudo">Study Hours</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section id="sobre">
+  <div class="container">
+    <div class="sobre-grid fade-in">
+      <div class="sobre-text">
+        <p class="section-label" data-en="about me" data-pt="sobre mim">about me</p>
+        <h2><span data-en="Security starts with " data-pt="Segurança começa com ">Security starts with </span><span data-en="knowledge" data-pt="conhecimento">knowledge</span>.</h2>
+        <p data-en="I'm from Franca – SP and I'm building my foundation in information security through Cisco Networking Academy certifications and practical projects. I work with Linux and Python for automation and have experience with vulnerability analysis in labs I developed. I'm open to opportunities in different IT and security areas, not just SOC."
+           data-pt="Sou de Franca – SP e estou construindo minha base em segurança da informação através de certificações pela Cisco Networking Academy e projetos práticos. Trabalho com Linux e Python para automação e tenho experiência com análise de vulnerabilidades em laboratórios que desenvolvi. Estou aberta a oportunidades em diferentes áreas de TI e segurança, não só SOC.">
+          I'm from Franca – SP and I'm building my foundation in information security through Cisco Networking Academy certifications and practical projects. I work with Linux and Python for automation and have experience with vulnerability analysis in labs I developed. I'm open to opportunities in different IT and security areas, not just SOC.
+        </p>
+      </div>
+      <div class="sobre-skills">
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-label"><span data-en="Cybersecurity / SOC" data-pt="Cibersegurança / SOC">Cybersecurity / SOC</span> <span>80%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:80%"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-label"><span data-en="Networks & Linux" data-pt="Redes & Linux">Networks & Linux</span> <span>75%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:75%"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-label"><span>Python</span> <span>72%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:72%"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-label"><span>SQL / MySQL</span> <span>65%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:65%"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-label"><span>Git & GitHub</span> <span>70%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:70%"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-label"><span>Power BI / Excel</span> <span>68%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:68%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICAÇÕES -->
+<section id="certs">
+  <div class="container">
+    <p class="section-label fade-in" data-en="certifications" data-pt="certificações">certifications</p>
+    <h2 class="fade-in"><span data-en="Credentials &amp; " data-pt="Credenciais &amp; ">Credentials &amp; </span><span data-en="Badges" data-pt="Badges">Badges</span></h2>
+    <div class="certs-grid">
+
+      <div class="cert-card fade-in">
+        <div class="cert-issuer">Cisco Networking Academy</div>
+        <div class="cert-name">Ethical Hacker</div>
+        <div class="cert-hours">70 <span data-en="hours" data-pt="horas">hours</span></div>
+        <div class="cert-desc" data-en="Introduction to pentesting concepts and vulnerability analysis, focused on identifying security gaps before they can be exploited." data-pt="Introdução a conceitos de pentesting e análise de vulnerabilidades, com foco em identificar brechas de segurança antes que possam ser exploradas.">Introduction to pentesting concepts and vulnerability analysis, focused on identifying security gaps before they can be exploited.</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.5rem;">
+          <span class="cert-badge" data-en="Verified" data-pt="Verificado">Verified</span>
+          <a href="SEU_LINK_VERIFICACAO_ETHICAL_HACKER" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--muted);transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'" data-en="Verify →" data-pt="Verificar →">Verify →</a>
+        </div>
+      </div>
+
+      <div class="cert-card fade-in">
+        <div class="cert-issuer">Cisco Networking Academy</div>
+        <div class="cert-name">Junior Cybersecurity Analyst</div>
+        <div class="cert-hours">120 <span data-en="hours" data-pt="horas">hours</span></div>
+        <div class="cert-desc" data-en="Specialization in security monitoring, network protection and incident response in a SOC environment." data-pt="Especialização em monitoramento de segurança, proteção de redes e resposta a incidentes em ambiente de SOC.">Specialization in security monitoring, network protection and incident response in a SOC environment.</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.5rem;">
+          <span class="cert-badge" data-en="Verified" data-pt="Verificado">Verified</span>
+          <a href="SEU_LINK_VERIFICACAO_JR_ANALYST" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--muted);transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'" data-en="Verify →" data-pt="Verificar →">Verify →</a>
+        </div>
+      </div>
+
+      <div class="cert-card fade-in">
+        <div class="cert-issuer">Cisco Networking Academy</div>
+        <div class="cert-name" data-en="Networking Basics" data-pt="Conceitos Básicos de Redes">Networking Basics</div>
+        <div class="cert-hours">22 <span data-en="hours" data-pt="horas">hours</span></div>
+        <div class="cert-desc" data-en="Fundamentals of network communication, protocols and data traffic." data-pt="Fundamentos de comunicação em redes, protocolos e tráfego de dados.">Fundamentals of network communication, protocols and data traffic.</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.5rem;">
+          <span class="cert-badge" data-en="Verified" data-pt="Verificado">Verified</span>
+          <a href="SEU_LINK_VERIFICACAO_REDES" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--muted);transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'" data-en="Verify →" data-pt="Verificar →">Verify →</a>
+        </div>
+      </div>
+
+      <div class="cert-card fade-in">
+        <div class="cert-issuer">DIO</div>
+        <div class="cert-name">Linux Experience</div>
+        <div class="cert-hours">41 <span data-en="hours" data-pt="horas">hours</span></div>
+        <div class="cert-desc" data-en="Practice in fundamental commands and Linux server management, with real infrastructure and automation projects." data-pt="Prática em comandos fundamentais e gerenciamento de servidores Linux, com desenvolvimento de projetos reais de infraestrutura e automação.">Practice in fundamental commands and Linux server management, with real infrastructure and automation projects.</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.5rem;">
+          <span class="cert-badge" data-en="Verified" data-pt="Verificado">Verified</span>
+          <a href="SEU_LINK_VERIFICACAO_LINUX" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--muted);transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'" data-en="Verify →" data-pt="Verificar →">Verify →</a>
+        </div>
+      </div>
+
+      <div class="cert-card fade-in">
+        <div class="cert-issuer">Curso em Vídeo · Prof. Guanabara</div>
+        <div class="cert-name">Python 3 (Worlds 1–4)</div>
+        <div class="cert-hours">160 <span data-en="hours" data-pt="horas">hours</span></div>
+        <div class="cert-desc" data-en="Programming logic, code versioning with Git/GitHub and good documentation practices." data-pt="Desenvolvimento de lógica de programação, versionamento de código com Git/GitHub e boas práticas de documentação.">Programming logic, code versioning with Git/GitHub and good documentation practices.</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.5rem;">
+          <span class="cert-badge" data-en="Completed" data-pt="Concluído">Completed</span>
+          <a href="SEU_LINK_VERIFICACAO_PYTHON" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--muted);transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'" data-en="Verify →" data-pt="Verificar →">Verify →</a>
+        </div>
+      </div>
+
+      <div class="cert-card fade-in">
+        <div class="cert-issuer">Udemy</div>
+        <div class="cert-name" data-en="SQL for Data Analysis" data-pt="SQL para Análise de Dados">SQL for Data Analysis</div>
+        <div class="cert-hours">MySQL</div>
+        <div class="cert-desc" data-en="Complex queries, advanced JOINs and business database analysis applied to real scenarios." data-pt="Consultas complexas, JOINs avançados e análise de bancos de dados de negócio aplicados a cenários reais.">Complex queries, advanced JOINs and business database analysis applied to real scenarios.</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.5rem;">
+          <span class="cert-badge" data-en="Completed" data-pt="Concluído">Completed</span>
+          <a href="SEU_LINK_VERIFICACAO_SQL" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--muted);transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'" data-en="Verify →" data-pt="Verificar →">Verify →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROJETOS -->
+<section id="projetos">
+  <div class="container">
+    <p class="section-label fade-in" data-en="projects" data-pt="projetos">projects</p>
+    <h2 class="fade-in"><span data-en="Featured " data-pt="Trabalhos em ">Featured </span><span data-en="Work" data-pt="Destaque">Work</span></h2>
+    <div class="projects-grid">
+
+      <div class="project-card fade-in">
+        <div class="project-header">
+          <div class="project-icon">🛡️</div>
+          <div class="project-links">
+            <a href="https://github.com/Stefaniasgs/SEU_REPOSITORIO_SQL" target="_blank">GitHub</a>
+          </div>
+        </div>
+        <div class="project-title" data-en="Defense Lab: SQL Injection" data-pt="Laboratório de Defesa: SQL Injection">Defense Lab: SQL Injection</div>
+        <div class="project-desc" data-en="Practical Python lab to demonstrate SQL Injection vulnerabilities and apply multiple defense layers. Simulates real authentication bypass attacks and implements OWASP-based mitigations: Parameterized Queries and Data Sanitization." data-pt="Laboratório prático em Python para demonstrar vulnerabilidades de SQL Injection e aplicar múltiplas camadas de defesa. Simula ataques reais de bypass de autenticação e implementa mitigações baseadas na OWASP: Queries Parametrizadas e Sanitização de Dados.">
+          Practical Python lab to demonstrate SQL Injection vulnerabilities and apply multiple defense layers. Simulates real authentication bypass attacks and implements OWASP-based mitigations: Parameterized Queries and Data Sanitization.
+        </div>
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag">SQLite</span>
+          <span class="tag">OWASP</span>
+          <span class="tag" data-en="Defensive Security" data-pt="Segurança Defensiva">Defensive Security</span>
+        </div>
+      </div>
+
+      <div class="project-card fade-in">
+        <div class="project-header">
+          <div class="project-icon">🔐</div>
+          <div class="project-links">
+            <a href="https://github.com/Stefaniasgs/SEU_REPOSITORIO_CRIPTOGRAFIA" target="_blank">GitHub</a>
+          </div>
+        </div>
+        <div class="project-title" data-en="Cryptography System · Vigenère Cipher" data-pt="Sistema de Criptografia · Cifra de Vigenère">Cryptography System · Vigenère Cipher</div>
+        <div class="project-desc" data-en="Implementation of a Python cryptography system based on the Vigenère Cipher, with support for multiple alphabets and keys. Project focused on cryptographic fundamentals and programming logic." data-pt="Implementação de um sistema de criptografia em Python baseado na Cifra de Vigenère, com suporte a múltiplos alfabetos e chaves. Projeto focado em fundamentos criptográficos e lógica de programação.">
+          Implementation of a Python cryptography system based on the Vigenère Cipher, with support for multiple alphabets and keys. Project focused on cryptographic fundamentals and programming logic.
+        </div>
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag" data-en="Cryptography" data-pt="Criptografia">Cryptography</span>
+          <span class="tag" data-en="Algorithms" data-pt="Algoritmos">Algorithms</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section id="contato">
+  <div class="container">
+    <div class="contato-inner">
+      <p class="section-label fade-in" data-en="contact" data-pt="contato">contact</p>
+      <h2 class="fade-in"><span data-en="Let's " data-pt="Vamos ">Let's </span><span data-en="Talk?" data-pt="Conversar?">Talk?</span></h2>
+      <p class="contato-sub fade-in" data-en="Available for opportunities in SOC, threat analysis and defensive security. Open to collaborative learning projects and security communities." data-pt="Disponível para oportunidades em SOC, análise de ameaças e segurança defensiva. Aberta a projetos de aprendizado colaborativo e comunidades de segurança.">
+        Available for opportunities in SOC, threat analysis and defensive security. Open to collaborative learning projects and security communities.
+      </p>
+
+      <div class="social-links fade-in">
+        <a href="https://www.linkedin.com/in/stefania-silva-aa84983a5" target="_blank" class="social-btn">
+          <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://github.com/Stefaniasgs" target="_blank" class="social-btn">
+          <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          GitHub
+        </a>
+        <a href="tel:+5516992877786" class="social-btn">
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          (16) 99287-7786
+        </a>
+      </div>
+
+      <div class="email-box fade-in">
+        <div>
+          <div class="email-label" data-en="Professional E-mail" data-pt="E-mail Profissional">Professional E-mail</div>
+          <div class="email-addr">stefaniasilva0000@gmail.com</div>
+        </div>
+        <a href="mailto:stefaniasilva0000@gmail.com" class="btn btn-primary" data-en="Send Message" data-pt="Enviar Mensagem">Send Message</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container footer-inner">
+    <span class="footer-copy">&copy; <span id="year"></span> — <span class="footer-name">Stefania Silva Guedes</span></span>
+    <span class="footer-copy" style="font-size:.65rem; opacity:.5;">Franca – SP · Cybersecurity &amp; Infra</span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  function setLang(lang) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    document.querySelectorAll('[data-en]').forEach(el => {
+      const val = el.getAttribute('data-' + lang);
+      if (val) el.innerHTML = val;
+    });
+  }
+
+  setLang('en');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), (i % 4) * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
